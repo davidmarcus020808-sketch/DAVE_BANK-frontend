@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+
+:root {
+  --bg: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --text: #141414;
+  --accent: #d4af37; /* Gold */
+  --card: #ffffff;
+  --border: #e5e5e5;
+  --muted: #777;
+}
+
+html.dark {
+  --bg: #000000;
+  --bg-secondary: #0d0d0d;
+  --text: #fff9e6;
+  --accent: #ffd700;
+  --card: #0b0b0b;
+  --border: #2b2b2b;
+  --muted: #b9a96b;
+}
+
+* {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+}
