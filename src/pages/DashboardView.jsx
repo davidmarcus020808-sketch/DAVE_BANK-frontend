@@ -1,5 +1,5 @@
 // src/pages/DashboardView.jsx
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import {
   Send,
@@ -18,7 +18,6 @@ import {
   ChevronRight,
   User,
   Settings,
-  Menu,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Services from "../components/Services";
@@ -29,13 +28,10 @@ import Footer from "../components/Footer";
 import TopNav from "../components/TopNav";
 import { useToast } from "../context/ToastContext";
 
-const NAV_HEIGHT = 64; // must match TopNav height
-
 const DashboardView = ({ changeView }) => {
   const { account, loading } = useContext(AccountContext);
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
     return (
@@ -60,123 +56,133 @@ const DashboardView = ({ changeView }) => {
     { id: "more", icon: MoreHorizontal, label: "More" },
   ];
 
+  const handleServiceClick = (id, label) => {
+    const comingSoon = [
+      "withdraw",
+      "cards",
+      "loan",
+      "business",
+      "insurance",
+      "finance",
+      "more",
+    ];
+    const directRoutes = {
+      airtime: "/airtime",
+      data: "/data",
+      transfer: "/transfer",
+      bills: "/bills",
+      betting: "/betting",
+    };
+
+    if (directRoutes[id]) return navigate(directRoutes[id]);
+    if (comingSoon.includes(id))
+      return navigate("/coming-soon", { state: { feature: label } });
+
+    changeView(id);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("account");
     showToast("success", "Signed out successfully ✅");
-    setTimeout(() => navigate("/logout"), 800);
+    setTimeout(() => navigate("/logout"), 1000);
   };
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      {/* Top Navigation (ALWAYS FIXED) */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-16 bg-black border-b border-yellow-700">
-        <TopNav />
+    <div className="flex min-h-screen bg-black">
+      {/* Sidebar */}
+      <div className="hidden lg:block lg:w-64 lg:fixed lg:h-full bg-gradient-to-b from-yellow-700 to-yellow-800 text-black font-semibold">
+        <Sidebar />
       </div>
 
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      {/* Main content */}
+      <div className="flex-1 flex flex-col min-h-screen lg:ml-64">
+        <TopNav />
 
-      {/* Sidebar */}
-      <aside
-        className={`
-          fixed z-50 w-64 bg-gradient-to-b from-yellow-700 to-yellow-800
-          top-16 bottom-0
-          transform transition-transform duration-300
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0
-        `}
-      >
-        <Sidebar />
-      </aside>
-
-      {/* Mobile Menu Button (inside TopNav zone) */}
-      <button
-        onClick={() => setSidebarOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-[60] p-2 rounded-md bg-yellow-600 text-black"
-      >
-        <Menu size={18} />
-      </button>
-
-      {/* Main Content */}
-      <main
-        className="
-          pt-20
-          px-4 sm:px-6 lg:px-8
-          lg:ml-64
-          min-h-screen
-        "
-      >
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-6"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md bg-yellow-600 flex items-center justify-center">
-              <User size={18} className="text-black" />
+        <main className="flex-1 pt-20 px-4 sm:px-6 lg:px-8 overflow-y-auto">
+          {/* Header */}
+          <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-md bg-yellow-600 flex items-center justify-center shadow-md">
+                <User size={18} className="text-black" />
+              </div>
+              <div>
+                <p className="text-xs text-yellow-500">Welcome back</p>
+                <h2 className="text-base sm:text-lg font-semibold text-white truncate max-w-[220px]">
+                  {account?.full_name || "Loading..."}
+                </h2>
+              </div>
             </div>
-            <div className="leading-tight">
-              <p className="text-xs text-yellow-400">Welcome back</p>
-              <p className="text-sm font-semibold truncate max-w-[160px] sm:max-w-none">
-                {account?.full_name}
-              </p>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => changeView("accountdetails")}
+                className="px-3 py-2 rounded-md bg-yellow-600 text-black hover:bg-yellow-500 transition"
+              >
+                <Settings size={16} />
+              </button>
+              <button
+                onClick={handleLogout}
+                className="text-sm text-yellow-500 hover:text-red-500 transition"
+              >
+                Logout
+              </button>
             </div>
+          </motion.header>
+
+          {/* Balance Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <BalanceCard
+              balance={account?.balance || 0}
+              onAddMoney={() => navigate("/add-money")}
+              onViewHistory={() => navigate("/transactionhistory")}
+            />
+          </motion.div>
+
+          {/* Services */}
+          <div className="mt-6">
+            <Services services={services} onServiceClick={handleServiceClick} />
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Support Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            className="bg-yellow-900/20 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border border-yellow-700 gap-4 mt-6"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-md bg-yellow-600 flex items-center justify-center text-black">
+                <MessageCircle size={18} />
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-white">
+                  Need help?
+                </div>
+                <div className="text-xs text-yellow-400">
+                  Contact our 24/7 support team
+                </div>
+              </div>
+            </div>
             <button
               onClick={() => changeView("accountdetails")}
-              className="p-2 rounded-md bg-yellow-600 text-black"
+              className="text-yellow-500 font-semibold flex items-center gap-1 hover:text-yellow-300"
             >
-              <Settings size={16} />
+              Contact <ChevronRight size={14} />
             </button>
-            <button
-              onClick={handleLogout}
-              className="text-xs text-yellow-500"
-            >
-              Logout
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Balance */}
-        <BalanceCard
-          balance={account?.balance || 0}
-          onAddMoney={() => navigate("/add-money")}
-          onViewHistory={() => navigate("/transactionhistory")}
-        />
-
-        {/* Services */}
-        <div className="mt-6">
-          <Services services={services} />
-        </div>
-
-        {/* Support */}
-        <div className="mt-6 bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-yellow-600 rounded-md flex items-center justify-center">
-              <MessageCircle size={18} className="text-black" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold">Need help?</p>
-              <p className="text-xs text-yellow-400">
-                24/7 customer support
-              </p>
-            </div>
-          </div>
-          <button className="text-yellow-500 text-sm flex items-center gap-1">
-            Contact <ChevronRight size={14} />
-          </button>
-        </div>
+          </motion.div>
+        </main>
 
         <Footer />
-      </main>
+      </div>
     </div>
   );
 };
