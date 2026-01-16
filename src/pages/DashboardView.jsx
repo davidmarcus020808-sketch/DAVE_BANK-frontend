@@ -1,5 +1,5 @@
 // src/pages/DashboardView.jsx
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Send,
@@ -18,6 +18,8 @@ import {
   ChevronRight,
   User,
   Settings,
+  Menu,
+  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Services from "../components/Services";
@@ -32,6 +34,7 @@ const DashboardView = ({ changeView }) => {
   const { account, loading } = useContext(AccountContext);
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
     return (
@@ -88,15 +91,42 @@ const DashboardView = ({ changeView }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-black">
+    <div className="min-h-screen bg-black flex">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="hidden lg:block lg:w-64 lg:fixed lg:h-full bg-gradient-to-b from-yellow-700 to-yellow-800 text-black font-semibold">
+      <aside
+        className={`
+          fixed top-0 left-0 z-50 h-full w-64
+          bg-gradient-to-b from-yellow-700 to-yellow-800 text-black
+          transform transition-transform duration-300
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0 lg:static
+        `}
+      >
         <Sidebar />
-      </div>
+      </aside>
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen lg:ml-64">
-        <TopNav />
+        {/* TopNav */}
+        <div className="w-full">
+          <TopNav />
+        </div>
+
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-yellow-600 text-black"
+        >
+          <Menu size={18} />
+        </button>
 
         <main className="flex-1 pt-20 px-4 sm:px-6 lg:px-8 overflow-y-auto">
           {/* Header */}
@@ -104,16 +134,16 @@ const DashboardView = ({ changeView }) => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+            className="flex flex-col sm:flex-row justify-between gap-4 mb-6"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-yellow-600 flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 rounded-md bg-yellow-600 flex items-center justify-center">
                 <User size={18} className="text-black" />
               </div>
               <div>
                 <p className="text-xs text-yellow-500">Welcome back</p>
-                <h2 className="text-base sm:text-lg font-semibold text-white truncate max-w-[220px]">
-                  {account?.full_name || "Loading..."}
+                <h2 className="text-base sm:text-lg font-semibold text-white">
+                  {account?.full_name}
                 </h2>
               </div>
             </div>
@@ -121,67 +151,54 @@ const DashboardView = ({ changeView }) => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => changeView("accountdetails")}
-                className="px-3 py-2 rounded-md bg-yellow-600 text-black hover:bg-yellow-500 transition"
+                className="px-3 py-2 rounded-md bg-yellow-600 text-black"
               >
                 <Settings size={16} />
               </button>
               <button
                 onClick={handleLogout}
-                className="text-sm text-yellow-500 hover:text-red-500 transition"
+                className="text-sm text-yellow-500 hover:text-red-500"
               >
                 Logout
               </button>
             </div>
           </motion.header>
 
-          {/* Balance Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <BalanceCard
-              balance={account?.balance || 0}
-              onAddMoney={() => navigate("/add-money")}
-              onViewHistory={() => navigate("/transactionhistory")}
-            />
-          </motion.div>
+          {/* Balance */}
+          <BalanceCard
+            balance={account?.balance || 0}
+            onAddMoney={() => navigate("/add-money")}
+            onViewHistory={() => navigate("/transactionhistory")}
+          />
 
           {/* Services */}
           <div className="mt-6">
             <Services services={services} onServiceClick={handleServiceClick} />
           </div>
 
-          {/* Support Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-            className="bg-yellow-900/20 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border border-yellow-700 gap-4 mt-6"
-          >
+          {/* Support */}
+          <div className="mt-6 bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 flex flex-col sm:flex-row justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-yellow-600 flex items-center justify-center text-black">
-                <MessageCircle size={18} />
+              <div className="w-10 h-10 bg-yellow-600 rounded-md flex items-center justify-center">
+                <MessageCircle size={18} className="text-black" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-white">
-                  Need help?
-                </div>
-                <div className="text-xs text-yellow-400">
+                <p className="text-sm font-semibold text-white">Need help?</p>
+                <p className="text-xs text-yellow-400">
                   Contact our 24/7 support team
-                </div>
+                </p>
               </div>
             </div>
-            <button
-              onClick={() => changeView("accountdetails")}
-              className="text-yellow-500 font-semibold flex items-center gap-1 hover:text-yellow-300"
-            >
+            <button className="text-yellow-500 flex items-center gap-1 text-sm">
               Contact <ChevronRight size={14} />
             </button>
-          </motion.div>
+          </div>
         </main>
 
-        <Footer />
+        {/* Footer – compact on mobile */}
+        <div className="px-4 py-3 sm:py-6 text-xs sm:text-sm">
+          <Footer />
+        </div>
       </div>
     </div>
   );
