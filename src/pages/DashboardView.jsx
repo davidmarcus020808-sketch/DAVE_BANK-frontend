@@ -114,10 +114,11 @@ const DashboardView = ({ changeView }) => {
       </aside>
 
       {/* Main content */}
-      <div className="fixed top-0 left-0 right-0 z-40 lg:left-64">
-        <TopNav />
-      </div>
-
+      <div className="flex-1 flex flex-col min-h-screen lg:ml-64">
+        {/* TopNav */}
+        <div className="w-full">
+          <TopNav />
+        </div>
 
         {/* Mobile menu button */}
         <button
@@ -195,11 +196,11 @@ const DashboardView = ({ changeView }) => {
         </main>
 
         {/* Footer – compact on mobile */}
-            <div className="px-3 py-2 sm:px-4 sm:py-5 text-[10px] sm:text-sm">
+        <div className="px-4 py-3 sm:py-6 text-xs sm:text-sm">
           <Footer />
         </div>
       </div>
-
+    </div>
   );
 };
 
