@@ -1,5 +1,5 @@
 // src/pages/DashboardView.jsx
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import {
   Send,
@@ -18,8 +18,6 @@ import {
   ChevronRight,
   User,
   Settings,
-  Menu,
-  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Services from "../components/Services";
@@ -34,7 +32,6 @@ const DashboardView = ({ changeView }) => {
   const { account, loading } = useContext(AccountContext);
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
     return (
@@ -62,79 +59,56 @@ const DashboardView = ({ changeView }) => {
   const handleLogout = () => {
     localStorage.removeItem("account");
     showToast("success", "Signed out successfully ✅");
-    setTimeout(() => navigate("/logout"), 1000);
+    setTimeout(() => navigate("/logout"), 800);
   };
 
   return (
-    <div className="min-h-screen bg-black flex">
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/70 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <div
-        className={`fixed z-50 h-full w-64 bg-gradient-to-b from-yellow-700 to-yellow-800 
-        transform transition-transform duration-300
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 lg:static`}
-      >
+    <div className="min-h-screen bg-black text-white flex">
+      {/* Desktop Sidebar ONLY */}
+      <aside className="hidden lg:block w-64 bg-gradient-to-b from-yellow-700 to-yellow-800">
         <Sidebar />
-      </div>
+      </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen lg:ml-64">
-        {/* Top Nav */}
-        <div className="fixed top-0 left-0 right-0 z-30 bg-black lg:ml-64">
-          <TopNav />
-        </div>
+      {/* Main */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Navigation */}
+        <TopNav />
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-yellow-600 text-black"
-        >
-          <Menu size={20} />
-        </button>
-
-        <main className="flex-1 pt-24 px-4 sm:px-6 lg:px-8 overflow-y-auto">
+        {/* Content */}
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
           {/* Header */}
-          <motion.header
-            initial={{ opacity: 0, y: -20 }}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
+            className="flex items-center justify-between mb-6"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-yellow-600 flex items-center justify-center">
-                <User size={20} />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-yellow-600 flex items-center justify-center">
+                <User size={18} className="text-black" />
               </div>
               <div>
-                <p className="text-sm text-yellow-500">Welcome back,</p>
-                <h2 className="text-lg sm:text-xl font-semibold text-white">
+                <p className="text-xs text-yellow-500">Welcome back</p>
+                <p className="text-sm font-semibold truncate max-w-[180px] sm:max-w-none">
                   {account?.full_name}
-                </h2>
+                </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => changeView("accountdetails")}
-                className="p-2 rounded-lg bg-yellow-600 text-black hover:bg-yellow-500"
+                className="p-2 rounded-md bg-yellow-600 text-black"
               >
-                <Settings size={18} />
+                <Settings size={16} />
               </button>
               <button
                 onClick={handleLogout}
-                className="text-sm text-yellow-500 hover:text-red-500"
+                className="text-xs text-yellow-500"
               >
                 Logout
               </button>
             </div>
-          </motion.header>
+          </motion.div>
 
           {/* Balance */}
           <BalanceCard
@@ -144,27 +118,27 @@ const DashboardView = ({ changeView }) => {
           />
 
           {/* Services */}
-          <div className="mt-8">
+          <section className="mt-6">
             <Services services={services} />
-          </div>
+          </section>
 
           {/* Support */}
-          <div className="mt-8 bg-yellow-900/20 rounded-xl p-5 border border-yellow-700 flex flex-col sm:flex-row justify-between gap-4">
+          <section className="mt-6 bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center">
-                <MessageCircle size={20} />
+              <div className="w-10 h-10 bg-yellow-600 rounded-md flex items-center justify-center">
+                <MessageCircle size={18} className="text-black" />
               </div>
               <div>
-                <p className="text-white font-semibold">Need help?</p>
+                <p className="text-sm font-semibold">Need help?</p>
                 <p className="text-xs text-yellow-400">
-                  Contact our 24/7 support team
+                  24/7 customer support
                 </p>
               </div>
             </div>
-            <button className="text-yellow-500 font-semibold flex items-center gap-2 hover:text-yellow-300">
-              Contact <ChevronRight size={16} />
+            <button className="text-yellow-500 flex items-center gap-1 text-sm">
+              Contact <ChevronRight size={14} />
             </button>
-          </div>
+          </section>
         </main>
 
         <Footer />
