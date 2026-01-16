@@ -1,4 +1,3 @@
-// src/components/Footer.jsx
 import React, { useState } from "react";
 import {
   Facebook,
@@ -23,157 +22,104 @@ const Footer = () => {
       return;
     }
 
-    // Simulate successful subscription
     showToast("success", "You’ve subscribed successfully! 🎉");
     setEmail("");
   };
 
   return (
-    <footer className="w-full bg-gradient-to-r from-black via-[#0a0a0a] to-black text-yellow-400 pt-6 pb-4 border-t border-yellow-500/20">
-      <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+    <footer className="w-full bg-gradient-to-r from-black via-[#0a0a0a] to-black text-yellow-400 border-t border-yellow-500/20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 text-sm">
         {/* Branding */}
-        <div>
-          <h2 className="text-2xl font-semibold tracking-tight mb-2 text-yellow-300">
+        <div className="flex flex-col gap-1 sm:gap-2">
+          <h2 className="text-lg sm:text-2xl font-semibold tracking-tight text-yellow-300">
             DAVEBANK
           </h2>
-          <p className="text-yellow-200/70 text-xs leading-relaxed mb-3">
+          <p className="text-yellow-200/70 text-xs sm:text-sm leading-snug">
             Your trusted partner in financial growth.
           </p>
-          <div className="flex gap-3 mt-3">
-            <a
-              href="#"
-              className="opacity-75 hover:opacity-100 transition"
-            >
-              <Facebook size={16} />
-            </a>
-            <a
-              href="#"
-              className="opacity-75 hover:opacity-100 transition"
-            >
-              <Twitter size={16} />
-            </a>
-            <a
-              href="#"
-              className="opacity-75 hover:opacity-100 transition"
-            >
-              <Instagram size={16} />
-            </a>
-            <a
-              href="#"
-              className="opacity-75 hover:opacity-100 transition"
-            >
-              <Linkedin size={16} />
-            </a>
+          <div className="flex gap-2 mt-1 sm:mt-2">
+            {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
+              <a
+                key={i}
+                href="#"
+                className="opacity-75 hover:opacity-100 transition"
+              >
+                <Icon size={16} />
+              </a>
+            ))}
           </div>
         </div>
 
         {/* Contact */}
-        <div>
-          <h3 className="text-sm font-semibold mb-2 text-yellow-300">
-            Contact Us
-          </h3>
-          <ul className="space-y-1 text-yellow-200/80">
-            <li className="flex items-center gap-2">
-              <Phone size={14} /> +1 (234) 567-890
-            </li>
-            <li className="flex items-center gap-2">
-              <Mail size={14} /> support@davebank.com
-            </li>
-            <li>123 Finance St, Lagos, Nigeria</li>
+        <div className="flex flex-col gap-1">
+          <h3 className="text-sm font-semibold text-yellow-300">Contact Us</h3>
+          <ul className="space-y-1 text-yellow-200/80 text-xs sm:text-sm">
+            <li className="flex items-center gap-1"><Phone size={14} /> +1 (234) 567-890</li>
+            <li className="flex items-center gap-1"><Mail size={14} /> support@davebank.com</li>
+            <li className="text-xs sm:text-sm">123 Finance St, Lagos, Nigeria</li>
           </ul>
           <a
             href="/contact"
-            className="inline-block text-xs mt-2 text-yellow-300 hover:text-yellow-200 transition"
+            className="text-xs sm:text-sm mt-1 text-yellow-300 hover:text-yellow-200 transition"
           >
             Contact Form →
           </a>
         </div>
 
         {/* Quick Links */}
-        <div>
-          <h3 className="text-sm font-semibold mb-2 text-yellow-300">
-            Quick Links
-          </h3>
-          <ul className="space-y-1 text-yellow-200/80">
-            <li>
-              <a href="/about" className="hover:text-yellow-200 transition">
-                About Us
-              </a>
-            </li>
-            <li>
-              <a href="/careers" className="hover:text-yellow-200 transition">
-                Careers
-              </a>
-            </li>
-            <li>
-              <a href="/investors" className="hover:text-yellow-200 transition">
-                Investor Relations
-              </a>
-            </li>
-            <li>
-              <a href="/privacy" className="hover:text-yellow-200 transition">
-                Privacy Policy
-              </a>
-            </li>
-            <li>
-              <a href="/terms" className="hover:text-yellow-200 transition">
-                Terms of Service
-              </a>
-            </li>
-            <li>
-              <a href="/faqs" className="hover:text-yellow-200 transition">
-                FAQs
-              </a>
-            </li>
+        <div className="flex flex-col gap-1">
+          <h3 className="text-sm font-semibold text-yellow-300">Quick Links</h3>
+          <ul className="space-y-1 text-yellow-200/80 text-xs sm:text-sm">
+            {[
+              { name: "About Us", link: "/about" },
+              { name: "Careers", link: "/careers" },
+              { name: "Investor Relations", link: "/investors" },
+              { name: "Privacy Policy", link: "/privacy" },
+              { name: "Terms of Service", link: "/terms" },
+              { name: "FAQs", link: "/faqs" },
+            ].map((item) => (
+              <li key={item.link}>
+                <a href={item.link} className="hover:text-yellow-200 transition text-xs sm:text-sm">
+                  {item.name}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Newsletter & Security */}
-        <div>
-          <h3 className="text-sm font-semibold mb-2 text-yellow-300">
-            Stay Updated
-          </h3>
-          <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1 sm:gap-2">
+          <h3 className="text-sm font-semibold text-yellow-300">Stay Updated</h3>
+          <form onSubmit={handleSubscribe} className="flex flex-col gap-1 sm:gap-2">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="p-2 rounded-md text-gray-900 text-xs focus:outline-none focus:ring-2 focus:ring-yellow-500 shadow-[0_0_10px_rgba(255,215,0,0.3)] focus:shadow-[0_0_15px_rgba(255,215,0,0.6)] transition-all duration-300"
+              className="p-1 sm:p-2 rounded-md text-gray-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 shadow-[0_0_5px_rgba(255,215,0,0.2)] transition-all duration-200"
             />
             <button
               type="submit"
-              className="bg-yellow-400 text-black text-xs font-semibold py-2 rounded-md hover:bg-yellow-300 hover:shadow-[0_0_15px_rgba(255,215,0,0.8)] transition-all duration-300"
+              className="bg-yellow-400 text-black text-xs sm:text-sm font-semibold py-1 sm:py-2 rounded-md hover:bg-yellow-300 hover:shadow-[0_0_8px_rgba(255,215,0,0.5)] transition-all duration-200"
             >
               Subscribe
             </button>
           </form>
 
-          <div className="mt-4 border-t border-yellow-500/20 pt-3">
-            <p className="text-xs text-yellow-200/80">
-              🔒 SSL Secured | Trusted Transactions
-            </p>
-            <p className="text-xs text-yellow-200/70 mt-1">
-              🏆 Best Digital Bank 2025
-            </p>
+          <div className="mt-1 sm:mt-4 border-t border-yellow-500/20 pt-1 sm:pt-2 text-xs sm:text-sm text-yellow-200/70">
+            <p>🔒 SSL Secured | Trusted Transactions</p>
+            <p>🏆 Best Digital Bank 2025</p>
           </div>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-yellow-500/20 mt-6 pt-3 text-xs text-yellow-300/80 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-8">
+      <div className="border-t border-yellow-500/20 px-4 sm:px-6 lg:px-8 py-1 sm:py-2 text-xs sm:text-sm text-yellow-300/80 flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-0">
         <p>© {new Date().getFullYear()} DAVEBANK. All rights reserved.</p>
-        <div className="flex items-center gap-4 mt-2 md:mt-0">
-          <a href="/privacy" className="hover:text-yellow-200 transition">
-            Privacy
-          </a>
-          <a href="/terms" className="hover:text-yellow-200 transition">
-            Terms
-          </a>
-          <a
-            href="#"
-            className="flex items-center gap-1 hover:text-yellow-200 transition"
-          >
+        <div className="flex items-center gap-2 sm:gap-4 mt-1 sm:mt-0">
+          <a href="/privacy" className="hover:text-yellow-200 transition">Privacy</a>
+          <a href="/terms" className="hover:text-yellow-200 transition">Terms</a>
+          <a href="#" className="flex items-center gap-1 hover:text-yellow-200 transition">
             <Globe size={12} /> English
           </a>
         </div>
