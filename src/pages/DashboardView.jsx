@@ -1,5 +1,5 @@
 // src/pages/DashboardView.jsx
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import {
   Send,
@@ -18,8 +18,6 @@ import {
   ChevronRight,
   User,
   Settings,
-  Menu,
-  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Services from "../components/Services";
@@ -34,8 +32,8 @@ const DashboardView = ({ changeView }) => {
   const { account, loading } = useContext(AccountContext);
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Show loading message while account data is being fetched
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen text-yellow-500">
@@ -91,115 +89,100 @@ const DashboardView = ({ changeView }) => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex">
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
+    <div className="flex min-h-screen bg-black">
       {/* Sidebar */}
-      <aside
-        className={`
-          fixed top-0 left-0 z-50 h-full w-64
-          bg-gradient-to-b from-yellow-700 to-yellow-800 text-black
-          transform transition-transform duration-300
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0 lg:static
-        `}
-      >
+      <div className="w-64 fixed h-full bg-gradient-to-b from-yellow-700 to-yellow-800 text-black font-semibold">
         <Sidebar />
-      </aside>
-
-      {/* Main content */}
-      <div className="fixed top-0 left-0 right-0 z-40 lg:left-64">
-        <TopNav />
       </div>
 
+      {/* Main content */}
+      <div className="flex-1 ml-64 flex flex-col min-h-screen">
+        <TopNav />
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-yellow-600 text-black"
-        >
-          <Menu size={18} />
-        </button>
-
-        <main className="flex-1 pt-20 px-4 sm:px-6 lg:px-8 overflow-y-auto">
+        <main className="flex-1 pt-20 p-8 overflow-y-auto">
           {/* Header */}
           <motion.header
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-col sm:flex-row justify-between gap-4 mb-6"
+            className="flex flex-row justify-between items-center mb-8 gap-4 w-full"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-yellow-600 flex items-center justify-center">
-                <User size={18} className="text-black" />
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-yellow-600 flex items-center justify-center shadow-md">
+                <User size={20} className="text-black" />
               </div>
               <div>
-                <p className="text-xs text-yellow-500">Welcome back</p>
-                <h2 className="text-base sm:text-lg font-semibold text-white">
-                  {account?.full_name}
+                <p className="text-sm text-yellow-500">Welcome back,</p>
+                <h2 className="text-lg md:text-xl font-semibold text-white">
+                  {account?.full_name || "Loading..."}
                 </h2>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => changeView("accountdetails")}
-                className="px-3 py-2 rounded-md bg-yellow-600 text-black"
+                className="px-3 py-2 rounded-lg bg-yellow-600 text-black shadow-sm hover:bg-yellow-500 transition hidden md:flex"
               >
-                <Settings size={16} />
+                <Settings size={18} />
               </button>
               <button
                 onClick={handleLogout}
-                className="text-sm text-yellow-500 hover:text-red-500"
+                className="text-sm text-yellow-500 hover:text-red-500 transition hidden md:flex"
               >
                 Logout
               </button>
             </div>
           </motion.header>
 
-          {/* Balance */}
-          <BalanceCard
-            balance={account?.balance || 0}
-            onAddMoney={() => navigate("/add-money")}
-            onViewHistory={() => navigate("/transactionhistory")}
-          />
+          {/* Balance Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <BalanceCard
+              balance={account?.balance || 0}
+              onAddMoney={() => navigate("add-money")}
+              onViewHistory={() => navigate("/transactionhistory")}
+            />
+          </motion.div>
 
           {/* Services */}
-          <div className="mt-6">
+          <div className="mt-8">
             <Services services={services} onServiceClick={handleServiceClick} />
           </div>
 
-          {/* Support */}
-          <div className="mt-6 bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 flex flex-col sm:flex-row justify-between gap-4">
+          {/* Support Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            className="bg-yellow-900/20 rounded-xl p-5 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between border border-yellow-700 gap-4 mt-8"
+          >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-600 rounded-md flex items-center justify-center">
-                <MessageCircle size={18} className="text-black" />
+              <div className="w-12 h-12 rounded-lg bg-yellow-600 flex items-center justify-center text-black">
+                <MessageCircle size={20} />
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">Need help?</p>
-                <p className="text-xs text-yellow-400">
+                <div className="text-sm font-semibold text-white">Need help?</div>
+                <div className="text-xs text-yellow-400">
                   Contact our 24/7 support team
-                </p>
+                </div>
               </div>
             </div>
-            <button className="text-yellow-500 flex items-center gap-1 text-sm">
-              Contact <ChevronRight size={14} />
+            <button
+              onClick={() => changeView("accountdetails")}
+              className="text-yellow-500 font-semibold flex items-center gap-2 hover:text-yellow-300"
+            >
+              Contact <ChevronRight size={16} />
             </button>
-          </div>
+          </motion.div>
         </main>
 
-          {/* Footer (compact on mobile) */}
-          <div className="px-3 py-2 sm:px-4 sm:py-5 text-[10px] sm:text-sm">
-            <Footer />
-          </div>
-
+        <Footer />
       </div>
+    </div>
   );
 };
 
