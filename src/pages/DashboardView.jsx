@@ -199,7 +199,7 @@ const DashboardView = ({ changeView }) => {
           <Footer />
         </div>
       </div>
-    </div>
+
   );
 };
 
