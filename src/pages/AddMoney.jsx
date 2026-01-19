@@ -1,7 +1,7 @@
 // src/pages/AddMoney.jsx
 import React, { useState, useContext } from "react";
 import { AccountContext } from "../context/AccountContext";
-import { useFlutterwave } from "flutterwave-react-v3";
+import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v4";
 import api from "../api/axiosInstance";
 import Footer from "../components/Footer";
 import ConfirmationModal from "../components/ConfirmationModal";
