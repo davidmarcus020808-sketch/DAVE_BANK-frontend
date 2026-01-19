@@ -1,7 +1,6 @@
 // src/pages/AddMoney.jsx
-import React, { useContext, useState, useMemo } from "react";
+import React, { useContext, useState } from "react";
 import { AccountContext } from "../context/AccountContext";
-import { useFlutterwave, closePaymentModal } from "flutterwave-react";
 import api from "../api/axiosInstance";
 import Footer from "../components/Footer";
 import ConfirmationModal from "../components/ConfirmationModal";
@@ -18,7 +17,6 @@ const AddMoney = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [paidAmount, setPaidAmount] = useState(0);
 
-  /* ------------------ VALIDATION ------------------ */
   const validateAmount = (value) => {
     const num = Number(value);
     if (!value) return "Amount is required";
@@ -33,32 +31,6 @@ const AddMoney = () => {
     setError(validateAmount(value));
   };
 
-  const isValidAmount = amount && !error;
-
-  /* ------------------ FLUTTERWAVE CONFIG ------------------ */
-  const flutterwaveConfig = useMemo(
-    () => ({
-      public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
-      tx_ref: "",
-      amount: Number(amount),
-      currency: "NGN",
-      payment_options: "card,ussd,banktransfer",
-      customer: {
-        email: account?.email || "user@example.com",
-        phonenumber: account?.phone || "0000000000",
-        name: account?.full_name || "DaveBank User",
-      },
-      customizations: {
-        title: "DaveBank Wallet Top-Up",
-        description: "Add money to your wallet",
-      },
-    }),
-    [amount, account]
-  );
-
-  const handleFlutterwavePayment = useFlutterwave(flutterwaveConfig);
-
-  /* ------------------ PAYMENT FLOW ------------------ */
   const startPayment = async () => {
     const validationError = validateAmount(amount);
     setError(validationError);
@@ -72,20 +44,28 @@ const AddMoney = () => {
         amount: Number(amount),
       });
 
-      handleFlutterwavePayment({
+      window.FlutterwaveCheckout({
+        public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
         tx_ref: res.data.tx_ref,
+        amount: Number(amount),
+        currency: "NGN",
+        payment_options: "card,ussd,banktransfer",
+        customer: {
+          email: account?.email || "user@example.com",
+          phonenumber: account?.phone || "0000000000",
+          name: account?.full_name || "DaveBank User",
+        },
+        customizations: {
+          title: "DaveBank Wallet Top-Up",
+          description: "Add money to your wallet",
+        },
         callback: () => {
           setPaidAmount(Number(amount));
           setModalOpen(true);
           setAmount("");
-          closePaymentModal();
-
-          // allow webhook to hit backend
           setTimeout(() => refreshAccount(), 2000);
         },
-        onClose: () => {
-          setLoading(false);
-        },
+        onclose: () => setLoading(false),
       });
     } catch (err) {
       addNotification("Unable to start payment", "error");
@@ -94,14 +74,13 @@ const AddMoney = () => {
     }
   };
 
-  /* ------------------ UI ------------------ */
   return (
     <div className="flex flex-col min-h-screen bg-black text-yellow-400">
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-gray-900 rounded-xl p-6">
-          <h1 className="text-2xl font-bold text-center mb-6">
+          <h2 className="text-2xl font-bold text-center mb-6">
             Add Money
-          </h1>
+          </h2>
 
           <input
             type="number"
@@ -112,15 +91,13 @@ const AddMoney = () => {
             className="w-full p-3 rounded bg-black text-yellow-400 placeholder-yellow-600"
           />
 
-          {error && (
-            <p className="text-red-500 text-sm mt-2">{error}</p>
-          )}
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
           <button
             onClick={startPayment}
-            disabled={!isValidAmount || loading}
-            className={`w-full mt-5 py-3 rounded font-bold transition ${
-              isValidAmount
+            disabled={!amount || !!error || loading}
+            className={`w-full mt-5 py-3 rounded font-bold ${
+              !error && amount
                 ? "bg-yellow-500 text-black hover:bg-yellow-400"
                 : "bg-gray-700 cursor-not-allowed"
             }`}
