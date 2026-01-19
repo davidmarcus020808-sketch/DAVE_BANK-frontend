@@ -194,13 +194,13 @@ const DashboardView = ({ changeView }) => {
           </div>
         </main>
 
-          {/* Footer (compact on mobile) */}
-          <div className="px-3 py-2 sm:px-4 sm:py-5 text-[10px] sm:text-sm">
-            <Footer />
-          </div>
-
-      </div>
+        {/* Footer (compact on mobile) */}
+        <div className="px-3 py-2 sm:px-4 sm:py-5 text-[10px] sm:text-sm">
+          <Footer />
+        </div>
+    </div>
   );
 };
 
 export default DashboardView;
+
