@@ -19,26 +19,28 @@ import {
   User,
   Settings,
   Menu,
-  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Services from "../components/Services";
+
 import { AccountContext } from "../context/AccountContext";
-import BalanceCard from "../components/BalanceCard";
-import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
-import TopNav from "../components/TopNav";
 import { useToast } from "../context/ToastContext";
+
+import Sidebar from "../components/Sidebar";
+import TopNav from "../components/TopNav";
+import BalanceCard from "../components/BalanceCard";
+import Services from "../components/Services";
+import Footer from "../components/Footer";
 
 const DashboardView = ({ changeView }) => {
   const { account, loading } = useContext(AccountContext);
-  const navigate = useNavigate();
   const { showToast } = useToast();
+  const navigate = useNavigate();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-yellow-500">
+      <div className="min-h-screen flex items-center justify-center bg-black text-yellow-500">
         Loading your account...
       </div>
     );
@@ -69,7 +71,8 @@ const DashboardView = ({ changeView }) => {
       "finance",
       "more",
     ];
-    const directRoutes = {
+
+    const routes = {
       airtime: "/airtime",
       data: "/data",
       transfer: "/transfer",
@@ -77,9 +80,10 @@ const DashboardView = ({ changeView }) => {
       betting: "/betting",
     };
 
-    if (directRoutes[id]) return navigate(directRoutes[id]);
-    if (comingSoon.includes(id))
+    if (routes[id]) return navigate(routes[id]);
+    if (comingSoon.includes(id)) {
       return navigate("/coming-soon", { state: { feature: label } });
+    }
 
     changeView(id);
   };
@@ -92,7 +96,7 @@ const DashboardView = ({ changeView }) => {
 
   return (
     <div className="min-h-screen bg-black flex">
-      {/* Mobile overlay */}
+      {/* Overlay (mobile) */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/60 z-40 lg:hidden"
@@ -103,7 +107,7 @@ const DashboardView = ({ changeView }) => {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-50 h-full w-64
+          fixed inset-y-0 left-0 z-50 w-64
           bg-gradient-to-b from-yellow-700 to-yellow-800 text-black
           transform transition-transform duration-300
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
@@ -113,13 +117,14 @@ const DashboardView = ({ changeView }) => {
         <Sidebar />
       </aside>
 
-      {/* Main content */}
-      <div className="fixed top-0 left-0 right-0 z-40 lg:left-64">
-        <TopNav />
-      </div>
+      {/* Main Area */}
+      <div className="flex-1 lg:ml-64 relative">
+        {/* Top Navigation */}
+        <div className="fixed top-0 left-0 right-0 z-40 lg:left-64">
+          <TopNav />
+        </div>
 
-
-        {/* Mobile menu button */}
+        {/* Mobile Menu Button */}
         <button
           onClick={() => setSidebarOpen(true)}
           className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-yellow-600 text-black"
@@ -127,21 +132,21 @@ const DashboardView = ({ changeView }) => {
           <Menu size={18} />
         </button>
 
-        <main className="flex-1 pt-20 px-4 sm:px-6 lg:px-8 overflow-y-auto">
+        <main className="pt-20 px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <motion.header
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
             className="flex flex-col sm:flex-row justify-between gap-4 mb-6"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-yellow-600 flex items-center justify-center">
-                <User size={18} className="text-black" />
+              <div className="w-10 h-10 bg-yellow-600 rounded-md flex items-center justify-center">
+                <User size={18} />
               </div>
               <div>
                 <p className="text-xs text-yellow-500">Welcome back</p>
-                <h2 className="text-base sm:text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-white">
                   {account?.full_name}
                 </h2>
               </div>
@@ -150,7 +155,7 @@ const DashboardView = ({ changeView }) => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => changeView("accountdetails")}
-                className="px-3 py-2 rounded-md bg-yellow-600 text-black"
+                className="p-2 rounded-md bg-yellow-600 text-black"
               >
                 <Settings size={16} />
               </button>
@@ -161,7 +166,7 @@ const DashboardView = ({ changeView }) => {
                 Logout
               </button>
             </div>
-          </motion.header>
+          </motion.div>
 
           {/* Balance */}
           <BalanceCard
@@ -176,10 +181,10 @@ const DashboardView = ({ changeView }) => {
           </div>
 
           {/* Support */}
-          <div className="mt-6 bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 flex flex-col sm:flex-row justify-between gap-4">
+          <div className="mt-6 bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-yellow-600 rounded-md flex items-center justify-center">
-                <MessageCircle size={18} className="text-black" />
+                <MessageCircle size={18} />
               </div>
               <div>
                 <p className="text-sm font-semibold text-white">Need help?</p>
@@ -194,13 +199,13 @@ const DashboardView = ({ changeView }) => {
           </div>
         </main>
 
-        {/* Footer (compact on mobile) */}
-        <div className="px-3 py-2 sm:px-4 sm:py-5 text-[10px] sm:text-sm">
+        {/* Footer */}
+        <div className="px-3 py-4 text-xs sm:text-sm">
           <Footer />
         </div>
+      </div>
     </div>
   );
 };
 
 export default DashboardView;
-
