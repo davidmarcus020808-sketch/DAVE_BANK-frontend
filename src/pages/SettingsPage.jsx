@@ -121,7 +121,8 @@ const SettingsPage = () => {
   const handleOldSubmit = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.post("/validate-pin", { pin: oldPinVals.join("") });
+      const res = await axiosInstance.post("/validate-pin/", { pin: oldPinVals.join("") });
+
       if (res.data.valid) setModalStep(2);
       else {
         showToast("error", "Incorrect current PIN");
@@ -154,7 +155,7 @@ const handleConfirmSubmit = async () => {
   }
 try {
   setLoading(true);
-  await axiosInstance.post("/update-pin", { pin: newPinVals.join("") });
+  await axiosInstance.post("/update-pin/", { pin: newPinVals.join("") });
 
   setModalStep(0);
   showToast("success", "PIN changed successfully"); // show success immediately
