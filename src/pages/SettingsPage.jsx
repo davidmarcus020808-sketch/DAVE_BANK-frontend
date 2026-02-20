@@ -60,14 +60,14 @@ const MasterPinInput = ({ length = 4, values, setValues, inputRefs, autoFocus })
   };
 
   return (
-    <div className="grid grid-cols-4 gap-4 justify-center mt-3">
+    <div className="grid grid-cols-4 gap-3 sm:gap-4 justify-center mt-3">
       {Array.from({ length }).map((_, idx) => (
         <input
           key={idx}
           ref={(el) => (inputRefs.current[idx] = el)}
           inputMode="numeric"
           autoComplete="off"
-          className="w-16 h-16 rounded-2xl bg-black/65 border-2 border-yellow-800/40 text-center text-3xl font-bold text-yellow-100 outline-none
+          className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-black/65 border-2 border-yellow-800/40 text-center text-2xl sm:text-3xl font-bold text-yellow-100 outline-none
                      focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 transition"
           value={show[idx] ? values[idx] : values[idx] ? "•" : ""}
           onChange={(e) => handleChange(e, idx)}
@@ -146,44 +146,51 @@ const SettingsPage = () => {
     setModalStep(3);
   };
 
-const handleConfirmSubmit = async () => {
-  if (newPinVals.join("") !== confirmPinVals.join("")) {
-    showToast("error", "PINs do not match");
-    setConfirmPinVals(["", "", "", ""]);
-    confirmRefs.current[0]?.focus();
-    return;
-  }
-try {
-  setLoading(true);
-  await axiosInstance.post("/update-pin/", { pin: newPinVals.join("") });
+  const handleConfirmSubmit = async () => {
+    if (newPinVals.join("") !== confirmPinVals.join("")) {
+      showToast("error", "PINs do not match");
+      setConfirmPinVals(["", "", "", ""]);
+      confirmRefs.current[0]?.focus();
+      return;
+    }
+    try {
+      setLoading(true);
+      await axiosInstance.post("/update-pin/", { pin: newPinVals.join("") });
 
-  setModalStep(0);
-  showToast("success", "PIN changed successfully"); // show success immediately
+      setModalStep(0);
+      showToast("success", "PIN changed successfully"); // show success immediately
 
-  // Refresh account, but handle errors silently
-  try {
-    await fetchAccount();
-  } catch (err) {
-    console.error("Failed to refresh account after PIN change:", err);
-  }
+      // Refresh account, but handle errors silently
+      try {
+        await fetchAccount();
+      } catch (err) {
+        console.error("Failed to refresh account after PIN change:", err);
+      }
 
-  setNewPinVals(["", "", "", ""]);
-  setConfirmPinVals(["", "", "", ""]);
-} catch {
-  showToast("error", "Failed to update PIN. Try again.");
-} finally { 
-  setLoading(false); 
-}
-};
+      setNewPinVals(["", "", "", ""]);
+      setConfirmPinVals(["", "", "", ""]);
+    } catch {
+      showToast("error", "Failed to update PIN. Try again.");
+    } finally { 
+      setLoading(false); 
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-black text-yellow-50 w-full px-6 py-8 flex flex-col">
-      <div className="w-full max-w-3xl mx-auto">
-        <div className="flex items-center mb-8">
-          <button onClick={() => navigate(-1)} className="absolute top-5 left-5 bg-white/10 p-3 rounded-full hover:bg-white/20 transition">
-            <ArrowLeft className="mr-2" /> Back
-          </button>
-          <h1 className="text-3xl font-bold ml-4">Settings</h1>
+    <div className="min-h-screen bg-black text-yellow-50 w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8 flex flex-col">
+      <div className="w-full max-w-3xl mx-auto relative">
+        {/* Back Arrow - compact icon and responsive positioned so it won't overlap the Settings title */}
+        <button
+          onClick={() => navigate(-1)}
+          aria-label="Go back"
+          className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 lg:top-10 lg:left-10 bg-white/10 p-2.5 sm:p-3 rounded-full hover:bg-white/20 transition z-20"
+        >
+          <ArrowLeft className="text-yellow-100" size={18} />
+        </button>
+
+        <div className="flex items-center mb-6 sm:mb-8">
+          {/* leave spacing for the absolutely positioned back button on larger screens */}
+          <h1 className="text-3xl font-bold ml-0 sm:ml-10">Settings</h1>
         </div>
 
         <div className="space-y-5">

@@ -1,3 +1,4 @@
+// src/pages/HelpCenter.jsx
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HelpCircle, ChevronRight, BookOpen, Users, ShieldCheck } from "lucide-react";
@@ -47,7 +48,8 @@ const HelpCenter = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-yellow-400">
-      <div className="flex-grow px-6 py-12 flex flex-col items-center justify-start relative overflow-hidden">
+      <div className="flex-grow px-4 sm:px-6 md:px-12 py-8 sm:py-12 flex flex-col items-center justify-start relative overflow-hidden">
+
         {/* Background glow */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.06)_0%,transparent_80%)] pointer-events-none" />
 
@@ -60,16 +62,16 @@ const HelpCenter = () => {
           className="max-w-4xl w-full text-center mb-12"
         >
           <motion.div variants={fadeInUp} className="flex justify-center mb-4">
-            <div className="bg-yellow-500/20 p-6 rounded-full shadow-lg">
-              <HelpCircle className="text-yellow-400 w-12 h-12 animate-bounce" />
+            <div className="bg-yellow-500/20 p-5 sm:p-6 rounded-full shadow-lg">
+              <HelpCircle className="text-yellow-400 w-10 sm:w-12 h-10 sm:h-12 animate-bounce" />
             </div>
           </motion.div>
 
-          <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl font-extrabold text-yellow-400 mb-3 tracking-wide">
+          <motion.h1 variants={fadeInUp} className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-yellow-400 mb-3 tracking-wide">
             DAVE BANK Help Center
           </motion.h1>
 
-          <motion.p variants={fadeInUp} className="text-yellow-200/90 text-base md:text-lg leading-relaxed mb-6">
+          <motion.p variants={fadeInUp} className="text-yellow-200/90 text-sm sm:text-base md:text-lg leading-relaxed mb-6 px-2 sm:px-0">
             Browse articles, FAQs, and guides to help you manage your banking securely. Quick support is just a click away.
           </motion.p>
 
@@ -79,7 +81,7 @@ const HelpCenter = () => {
             onClick={goToHelpCenter}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-yellow-400 text-black font-semibold px-6 py-3 rounded-xl shadow-lg hover:bg-yellow-500 transition-colors"
+            className="bg-yellow-400 text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-lg hover:bg-yellow-500 transition-colors text-sm sm:text-base"
           >
             Visit Full Help Center
           </motion.button>
@@ -91,7 +93,7 @@ const HelpCenter = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+          className="max-w-4xl w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-12"
         >
           {[{
             icon: BookOpen,
@@ -110,11 +112,11 @@ const HelpCenter = () => {
               key={i}
               variants={fadeInUp}
               whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(255,215,0,0.3)" }}
-              className="bg-white/5 backdrop-blur-xl border border-yellow-600/30 rounded-2xl p-6 flex flex-col items-center text-center shadow-[0_0_20px_rgba(255,215,0,0.1)] cursor-pointer transition-all duration-300"
+              className="bg-white/5 backdrop-blur-xl border border-yellow-600/30 rounded-2xl p-4 sm:p-6 flex flex-col items-center text-center shadow-[0_0_20px_rgba(255,215,0,0.1)] cursor-pointer transition-all duration-300"
             >
-              <cat.icon className="w-10 h-10 text-yellow-400 mb-3" />
-              <h3 className="text-lg font-semibold text-yellow-300 mb-1">{cat.title}</h3>
-              <p className="text-yellow-200/80 text-sm">{cat.description}</p>
+              <cat.icon className="w-8 sm:w-10 h-8 sm:h-10 text-yellow-400 mb-2 sm:mb-3" />
+              <h3 className="text-md sm:text-lg font-semibold text-yellow-300 mb-1">{cat.title}</h3>
+              <p className="text-yellow-200/80 text-xs sm:text-sm">{cat.description}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -125,20 +127,22 @@ const HelpCenter = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="max-w-4xl w-full mb-12"
+          className="max-w-4xl w-full mb-12 px-2 sm:px-0"
         >
-          <motion.h2 variants={fadeInUp} className="text-2xl font-bold text-yellow-400 mb-6 text-center">Frequently Asked Questions</motion.h2>
-          <div className="flex flex-col gap-4">
+          <motion.h2 variants={fadeInUp} className="text-xl sm:text-2xl md:text-2xl font-bold text-yellow-400 mb-6 text-center">
+            Frequently Asked Questions
+          </motion.h2>
+          <div className="flex flex-col gap-3 sm:gap-4">
             {faqs.map((faq, index) => (
               <motion.div
                 key={index}
                 variants={fadeInUp}
                 whileHover={{ scale: 1.02, boxShadow: "0 0 25px rgba(255,215,0,0.3)" }}
-                className="bg-white/5 backdrop-blur-xl border border-yellow-600/20 rounded-2xl p-5 shadow-[0_0_15px_rgba(255,215,0,0.08)] transition-all duration-300"
+                className="bg-white/5 backdrop-blur-xl border border-yellow-600/20 rounded-2xl p-4 sm:p-5 shadow-[0_0_15px_rgba(255,215,0,0.08)] transition-all duration-300"
               >
                 <div className="flex items-center justify-between cursor-pointer">
                   <button
-                    className="text-yellow-300 font-semibold text-left flex-1"
+                    className="text-yellow-300 font-semibold text-left flex-1 text-sm sm:text-base"
                     onClick={() => window.location.href = HELP_CENTER_LINK}
                   >
                     {faq.question}
@@ -147,7 +151,7 @@ const HelpCenter = () => {
                     className="text-yellow-400"
                     onClick={() => toggleFAQ(index)}
                   >
-                    <ChevronRight className={`w-5 h-5 transform transition-transform ${expandedIndex === index ? "rotate-90" : ""}`} />
+                    <ChevronRight className={`w-4 sm:w-5 h-4 sm:h-5 transform transition-transform ${expandedIndex === index ? "rotate-90" : ""}`} />
                   </button>
                 </div>
 
@@ -158,7 +162,7 @@ const HelpCenter = () => {
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="text-yellow-200/80 mt-2 text-sm"
+                      className="text-yellow-200/80 mt-1 sm:mt-2 text-xs sm:text-sm"
                     >
                       {faq.answer}
                     </motion.p>
@@ -174,7 +178,7 @@ const HelpCenter = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="text-yellow-300/80 text-sm text-center max-w-md mb-6"
+          className="text-yellow-300/80 text-xs sm:text-sm text-center max-w-md mb-6 px-2 sm:px-0"
         >
           For instant help, click the chat icon at the bottom-right to connect with our live support team.
         </motion.div>

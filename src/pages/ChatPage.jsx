@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Headphones, Loader2, MessageCircle, ShieldCheck } from "lucide-react";
+import Footer from "../components/Footer";
+
 
 const LiveSupport = () => {
   const [chatLoaded, setChatLoaded] = useState(false);
@@ -88,8 +90,7 @@ const LiveSupport = () => {
         </p>
       </motion.div>
 
-      {/* Chat Loader / Info */}
-      {!chatLoaded ? (
+         {!chatLoaded ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -111,8 +112,9 @@ const LiveSupport = () => {
           </p>
         </motion.div>
       )}
+      <Footer />
     </div>
-  );
+    );
 };
 
 export default LiveSupport;

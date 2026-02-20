@@ -21,6 +21,9 @@ import NairaBetLogo from "../assets/nairabet.png";
 import BetKingLogo from "../assets/betking.png";
 import Bet9jaLogo from "../assets/bet9ja.jpeg";
 
+// Footer
+import Footer from "../components/Footer";
+
 const Betting = () => {
   const navigate = useNavigate();
   const { account, addTransaction } = useContext(AccountContext);
@@ -71,7 +74,7 @@ const Betting = () => {
         try {
           const response = await api.post("/transfer/verify/", {
             account_number: accountNumber,
-            bank_name: selectedPlatform.name, // use platform name as "bank_name"
+            bank_name: selectedPlatform.name,
           });
 
           if (response.data.success) {
@@ -90,7 +93,7 @@ const Betting = () => {
         } finally {
           setIsProcessing(false);
         }
-      }, 500); // debounce
+      }, 500);
 
       return () => clearTimeout(verificationTimer.current);
     } else {
@@ -135,46 +138,43 @@ const Betting = () => {
       return;
     }
 
-    setModalOpen(true); // open confirmation modal
+    setModalOpen(true);
   };
 
-const handleConfirm = async (pin) => {
-  setModalOpen(false);
-  setIsProcessing(true);
+  const handleConfirm = async (pin) => {
+    setModalOpen(false);
+    setIsProcessing(true);
 
-  try {
-    const transactionRes = await addTransaction({
-      type: "Betting",
-      amount: Number(amount),
-      account_name: accountName,
-      recipient: accountName,
-      provider: selectedPlatform.name,
-      account_number: accountNumber,
-      pin: pin,
-    });
+    try {
+      const transactionRes = await addTransaction({
+        type: "Betting",
+        amount: Number(amount),
+        account_name: accountName,
+        recipient: accountName,
+        provider: selectedPlatform.name,
+        account_number: accountNumber,
+        pin: pin,
+      });
 
-    console.log("Betting transaction result:", transactionRes);
+      const latestTx =
+        transactionRes?.transactions?.[0] ||
+        transactionRes?.transaction ||
+        transactionRes;
 
-    const latestTx =
-      transactionRes?.transactions?.[0] ||
-      transactionRes?.transaction ||
-      transactionRes; // fallback
+      setLastTransaction(latestTx);
 
-    setLastTransaction(latestTx);
-
-    if (latestTx) {
-      setShowSuccess(true);
-    } else {
-      showToast("error", "Transaction returned no data");
+      if (latestTx) {
+        setShowSuccess(true);
+      } else {
+        showToast("error", "Transaction returned no data");
+      }
+    } catch (err) {
+      console.error("Transaction error:", err);
+      showToast("error", "Transaction failed");
+    } finally {
+      setIsProcessing(false);
     }
-  } catch (err) {
-    console.error("Transaction error:", err);
-    showToast("error", "Transaction failed");
-  } finally {
-    setIsProcessing(false);
-  }
-};
-
+  };
 
   const resetForm = () => {
     setAmount("");
@@ -217,7 +217,7 @@ const handleConfirm = async (pin) => {
   // Render
   // -------------------
   return (
-    <div className="relative min-h-screen bg-black text-yellow-400">
+    <div className="relative min-h-screen bg-black text-yellow-400 flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 bg-black/90 sticky top-0 z-10 border-b border-yellow-500">
         <ArrowLeft
@@ -240,7 +240,7 @@ const handleConfirm = async (pin) => {
       </div>
 
       {/* Platforms Grid */}
-      <div className="px-5 pb-5">
+      <div className="px-5 pb-5 flex-1">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {bettingPlatforms.map((bet) => (
             <div
@@ -250,7 +250,7 @@ const handleConfirm = async (pin) => {
                 bg-black/90 border border-yellow-500 rounded-2xl p-4 shadow-md
                 ${selectedPlatform?.name === bet.name ? "scale-105 shadow-2xl" : ""}`}
             >
-              <div className="w-16 h-16 flex items-center justify-center mb-2">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mb-2">
                 <img
                   src={bet.logo}
                   alt={bet.name}
@@ -276,7 +276,7 @@ const handleConfirm = async (pin) => {
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
-            className="bg-black w-full h-[65vh] rounded-t-3xl shadow-2xl border-t-4 border-yellow-500"
+            className="bg-black w-full h-[85vh] sm:h-[65vh] rounded-t-3xl shadow-2xl border-t-4 border-yellow-500"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -328,7 +328,7 @@ const handleConfirm = async (pin) => {
                 whileTap={{ scale: 0.95 }}
                 disabled={!isVerified || !amount || isProcessing}
                 onClick={handlePaymentClick}
-                className="w-full py-3 rounded-2xl font-semibold bg-yellow-500 text-black"
+                className="w-full py-2.5 sm:py-3 rounded-2xl font-semibold bg-yellow-500 text-black"
               >
                 {isProcessing ? "Processing..." : `Pay ₦${Number(amount).toLocaleString()}`}
               </motion.button>
@@ -354,6 +354,9 @@ const handleConfirm = async (pin) => {
         onConfirm={handleConfirm}
         onCancel={() => setModalOpen(false)}
       />
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
